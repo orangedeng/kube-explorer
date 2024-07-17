@@ -40,7 +40,7 @@ jobs:
           EVENT: ${{ github.event_name }}
         run: |
           tag_name=latest;
-          if [[ ${EVENT} == "tag" ]]; then tag_name=${GITHUB_REF#refs/tags/} fi; 
+          if [[ ${EVENT} == "tag" ]]; then tag_name=${GITHUB_REF#refs/tags/}; fi; 
           echo "image_name=${REPO_OVERRIDE}/${IMAGE_OVERRIDE}:${tag_name}" >> $GITHUB_OUTPUT;
       -
         name: Set up QEMU
