@@ -26,8 +26,15 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: CI
+        if: startsWith(github.ref, 'refs/heads/')
         env: 
-          CROSS: ${{ github.event_name }}
+          CROSS: push
+        run: make github_ci
+
+      - name: CI
+        if: startsWith(github.ref, 'refs/tags/')
+        env: 
+          CROSS: tag
         run: make github_ci
 
       - name: Prepare for packaging image
@@ -37,10 +44,9 @@ jobs:
         env:
           REPO_OVERRIDE: ${{ vars.REPO || 'cnrancher' }}
           IMAGE_OVERRIDE: ${{ vars.IMAGE || 'kube-explorer' }}
-          EVENT: ${{ github.event_name }}
         run: |
           tag_name=latest;
-          if [[ ${EVENT} == "tag" ]]; then tag_name=${GITHUB_REF#refs/tags/}; fi; 
+          if [[ ${GITHUB_REF} == refs/tags/* ]]; then tag_name=${GITHUB_REF#refs/tags/}; fi; 
           echo "image_name=${REPO_OVERRIDE}/${IMAGE_OVERRIDE}:${tag_name}" >> $GITHUB_OUTPUT;
       -
         name: Set up QEMU
