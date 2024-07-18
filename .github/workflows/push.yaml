@@ -35,7 +35,9 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         env: 
           CROSS: tag
-        run: make github_ci
+        run: |
+          make github_ci
+          make release-note
 
       - name: Prepare for packaging image
         run: cp dist/* package/
