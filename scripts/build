@@ -64,16 +64,16 @@ esac
 mkdir -p "$DAPPER_SOURCE/bin"
 mkdir -p "$DAPPER_SOURCE/dist"
 
-if [ -z "$SKIP_COMPRESS" ]; then
-    for f in ./bin/*; do
-        filename=$(basename "$f")
-        if [[ $filename != *darwin* ]]; then
-            if upx -o "$DAPPER_SOURCE/dist/$filename" "$f"; then
-                echo "UPX done for $filename!"
-            else
-                echo "UPX failed for $filename, copying original file."
-                cp "$f" "$DAPPER_SOURCE/dist/$filename"
-            fi
+for f in ./bin/*; do
+    filename=$(basename "$f")
+    if [[ $filename != *darwin* && -z "$SKIP_COMPRESS" ]]; then
+        if upx -o "$DAPPER_SOURCE/dist/$filename" "$f"; then
+            echo "UPX done for $filename!"
+        else
+            echo "UPX failed for $filename, copying original file."
+            cp "$f" "$DAPPER_SOURCE/dist/$filename"
         fi
-    done
-fi
+    else
+        cp "$f" "$DAPPER_SOURCE/dist/$filename"
+    fi
+done
